@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+
+# Database
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+
+# Images (local cache)
+images/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+temp/
