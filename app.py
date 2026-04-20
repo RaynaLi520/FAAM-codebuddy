@@ -7,9 +7,16 @@ import pandas as pd
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'faam-womens-clothing-2026'
 
-# Database path
-DB_PATH = os.path.join(os.path.dirname(__file__), 'faam_products.db')
-IMAGE_FOLDER = os.path.join(os.path.dirname(__file__), 'images')
+# Get port from environment variable (Cloud Studio provides this)
+PORT = int(os.environ.get("PORT", 5000))
+
+# Database path - use absolute path for cloud deployment
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, 'faam_products.db')
+IMAGE_FOLDER = os.path.join(BASE_DIR, 'images')
+
+# Ensure directories exist
+os.makedirs(IMAGE_FOLDER, exist_ok=True)
 
 def get_db_connection():
     """Create database connection"""
@@ -426,4 +433,4 @@ def import_data():
 
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=False, host='0.0.0.0', port=PORT)
