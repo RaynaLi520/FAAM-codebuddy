@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="product-card">
         <div class="product-image">
             {% if product.image_url %}
-            <img src="{{ product.image_url }}{% if '?' not in product.image_url %}?wid=400&hei=400&qlt=80&fmt=jpeg{% endif %}" alt="{{ product.title }}" onerror="this.src='/static/images/placeholder.svg'">
+            <img src="{{ product.image_url }}{% if '?' not in product.image_url %}?wid=400&hei=400&qlt=80&fmt=webp{% endif %}" alt="{{ product.title }}" loading="lazy" onerror="this.onerror=null; this.src='/static/images/placeholder.svg'">
             {% else %}
             <div class="no-image">暂无图片</div>
             {% endif %}
