@@ -292,6 +292,17 @@ body {
     padding: 1rem;
 }
 
+.product-category {
+    display: inline-block;
+    font-size: 0.7rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
 .product-title {
     font-size: 1rem;
     font-weight: 600;
