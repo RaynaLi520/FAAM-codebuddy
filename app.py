@@ -1,11 +1,35 @@
-from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask import Flask, render_template, request, jsonify, send_from_directory, Response
 import sqlite3
 import os
+import urllib.request
+import urllib.error
 from datetime import datetime
 import pandas as pd
+from urllib.parse import unquote, quote
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'faam-womens-clothing-2026'
+
+# Jinja2 filter to generate image proxy URL
+@app.template_filter('image_proxy')
+def image_proxy(url):
+    """
+    Generate image proxy URL for target.scene7.com images.
+    This bypasses CORS and network restrictions in cloud environments.
+    """
+    if not url:
+        return '/static/images/placeholder.svg'
+
+    # Handle existing URLs
+    if url.startswith('//'):
+        url = 'https:' + url
+    elif not url.startswith('http'):
+        # If it's just a partial path like /is/image/Target/xxx
+        url = 'https://target.scene7.com' + url if url.startswith('/') else url
+
+    # Encode the URL and create proxy URL
+    encoded_url = quote(url, safe='')
+    return f'/image-proxy?url={encoded_url}'
 
 # Get port from environment variable (Cloud Studio provides this)
 PORT = int(os.environ.get("PORT", 5000))
@@ -354,6 +378,55 @@ def api_dashboard():
         'brand_stats': [dict(row) for row in brand_stats],
         'product_tcins': product_tcins
     })
+
+@app.route('/image-proxy')
+def image_proxy():
+    """
+    Image proxy to bypass CORS and network restrictions.
+    Access target.scene7.com images through this proxy.
+    Usage: /image-proxy?url=<encoded_image_url>
+    """
+    image_url = request.args.get('url', '')
+    if not image_url:
+        return Response('No image URL provided', status=400)
+
+    # Decode URL
+    image_url = unquote(image_url)
+
+    # Add https: prefix if needed
+    if image_url.startswith('//'):
+        image_url = 'https:' + image_url
+
+    # Add parameters if not present
+    if '?' not in image_url:
+        image_url = f"{image_url}?wid=600&hei=600&fmt=jpeg&qlt=80"
+
+    try:
+        # Create request with proper headers to mimic browser
+        req = urllib.request.Request(
+            image_url,
+            headers={
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.9',
+                'Referer': 'https://www.target.com/'
+            }
+        )
+
+        # Fetch image
+        with urllib.request.urlopen(req, timeout=30) as response:
+            image_data = response.read()
+            content_type = response.headers.get('Content-Type', 'image/jpeg')
+
+        return Response(image_data, status=200, mimetype=content_type)
+
+    except urllib.error.HTTPError as e:
+        print(f"HTTP Error fetching image: {e.code} - {image_url}")
+        return Response(f'Failed to fetch image: HTTP {e.code}', status=e.code)
+    except Exception as e:
+        print(f"Error fetching image: {str(e)} - {image_url}")
+        return Response(f'Failed to fetch image: {str(e)}', status=500)
+
 
 @app.route('/images/<path:filename>')
 def serve_image(filename):
