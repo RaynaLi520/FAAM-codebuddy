@@ -10,6 +10,32 @@ from datetime import datetime
 
 DB_PATH = os.path.join(os.path.dirname(__file__), 'faam_products.db')
 
+def parse_price(value):
+    """解析价格字符串，移除 $ 符号并转换为浮点数"""
+    if pd.isna(value):
+        return None
+    try:
+        # 移除 $ 符号和空格
+        price_str = str(value).replace('$', '').replace(',', '').strip()
+        return float(price_str) if price_str else None
+    except:
+        return None
+
+def parse_discount(value):
+    """解析折扣字符串，如 '30%' 或 '$5.00' """
+    if pd.isna(value):
+        return None
+    try:
+        val_str = str(value).strip()
+        if '%' in val_str:
+            return float(val_str.replace('%', '').strip())
+        elif '$' in val_str:
+            return parse_price(value)
+        else:
+            return float(val_str)
+    except:
+        return None
+
 def init_db():
     """初始化数据库表"""
     conn = sqlite3.connect(DB_PATH)
@@ -109,13 +135,13 @@ def import_excel_file(file_path):
                     tcin,
                     str(row.get('名称', '')),
                     str(row.get('品牌', '')),
-                    float(row.get('价格', 0)) if pd.notna(row.get('价格')) else None,
-                    float(row.get('零售价', 0)) if pd.notna(row.get('零售价')) else None,
-                    float(row.get('原价', 0)) if pd.notna(row.get('原价')) else None,
+                    parse_price(row.get('价格')),
+                    parse_price(row.get('零售价')),
+                    parse_price(row.get('原价')),
                     str(row.get('促销活动', '')),
                     str(row.get('节省金额', '')),
                     str(row.get('折扣比例', '')),
-                    float(row.get('最大折扣', 0)) if pd.notna(row.get('最大折扣')) else None,
+                    parse_discount(row.get('最大折扣')),
                     str(row.get('清仓状态', '')),
                     str(row.get('材质(面料)', '')),
                     int(row.get('购买人数', 0)) if pd.notna(row.get('购买人数')) else None,
