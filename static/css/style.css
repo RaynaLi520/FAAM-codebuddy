@@ -524,6 +524,8 @@ body {
 /* Category filter row - single line with scroll */
 .category-row {
     max-width: 100%;
+    flex-wrap: nowrap !important;
+    overflow: hidden;
 }
 
 .category-group {
@@ -532,6 +534,32 @@ body {
     overflow-x: auto;
     padding-bottom: 0.25rem;
     align-items: center;
+    gap: 0.5rem;
+}
+
+.category-group .toggle-btn {
+    flex-shrink: 0;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    border-radius: 16px;
+    transition: all 0.2s ease;
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+}
+
+.category-group .toggle-btn:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    transform: scale(1.05);
+}
+
+.category-group .toggle-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
 }
 
 .category-group::-webkit-scrollbar {
