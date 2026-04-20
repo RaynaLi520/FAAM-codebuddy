@@ -142,10 +142,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 {% endif %}
             </div>
 
-            {% if product.rating %}
+{% if product.rating or product.review_count %}
             <div class="product-rating">
+                {% if product.rating %}
                 <span class="stars">{{ "%.1f"|format(product.rating) }} ★</span>
+                {% endif %}
+                {% if product.review_count %}
                 <span class="count">({{ product.review_count }})</span>
+                {% endif %}
             </div>
             {% endif %}
 
