@@ -80,7 +80,11 @@ def import_excel_file(file_path):
 
     try:
         print(f"正在读取文件: {file_path}")
-        df = pd.read_excel(file_path, sheet_name="商品详情")
+        # 优先尝试读取第一个工作表，兼容不同命名的sheet
+        try:
+            df = pd.read_excel(file_path, sheet_name=0)
+        except:
+            df = pd.read_excel(file_path, sheet_name="商品详情")
 
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
@@ -168,6 +172,8 @@ def find_and_import_files(data_dir):
     print(f"\n总计导入 {total_imported} 条记录")
 
 if __name__ == "__main__":
+    import sys
+
     print("="*60)
     print("FAAM 数据导入工具")
     print("="*60)
@@ -175,13 +181,18 @@ if __name__ == "__main__":
     # 初始化数据库
     init_db()
 
-    # 询问数据目录
-    data_dir = input("\n请输入数据文件所在目录 (直接回车使用当前目录): ").strip()
-    if not data_dir:
-        data_dir = os.getcwd()
-
-    # 导入数据
-    find_and_import_files(data_dir)
+    # 支持命令行参数：python import_data.py <文件路径或目录>
+    if len(sys.argv) > 1:
+        path = sys.argv[1]
+        if os.path.isfile(path):
+            print(f"\n导入单个文件: {path}")
+            import_excel_file(path)
+        else:
+            print(f"\n导入目录: {path}")
+            find_and_import_files(path)
+    else:
+        # 默认查找当前目录
+        print("\n查找当前目录下的Excel文件...")
+        find_and_import_files(os.getcwd())
 
     print("\n导入完成!")
-    input("按回车键退出...")
