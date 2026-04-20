@@ -181,6 +181,18 @@ def import_excel_file(file_path):
                 if item_type == 'nan':
                     item_type = ''
 
+                # 图片URL处理 - 确保添加必要参数
+                raw_image_url = str(row.get('图片链接', '')).strip()
+                if raw_image_url and raw_image_url != 'nan':
+                    # 确保有 https 协议
+                    if raw_image_url.startswith('//'):
+                        raw_image_url = 'https:' + raw_image_url
+                    # 如果没有参数，添加尺寸和格式参数
+                    if '?' not in raw_image_url:
+                        raw_image_url = f"{raw_image_url}?wid=600&hei=600&fmt=jpeg&qlt=80"
+                else:
+                    raw_image_url = ''
+                
                 cursor.execute('''
                     INSERT INTO products
                     (tcin, product_id, title, brand, price, retail_price, original_price,
@@ -214,7 +226,7 @@ def import_excel_file(file_path):
                     str(row.get('颜色', '')),
                     str(row.get('尺码汇总', '')),
                     str(row.get('简洁卖点', '')),
-                    str(row.get('图片链接', '')),
+                    raw_image_url,
                     str(row.get('购买链接', '')),
                     item_type,
                     datetime.now().strftime('%Y-%m-%d %H:%M:%S')
