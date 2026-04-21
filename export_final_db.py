@@ -1,7 +1,18 @@
 import sqlite3
+import json
 
 conn = sqlite3.connect('faam_products.db')
 cursor = conn.cursor()
+
+def escape_sql(val):
+    """安全地转义 SQL 字符串值"""
+    if val is None:
+        return 'NULL'
+    elif isinstance(val, (int, float)):
+        return str(val)
+    else:
+        # 转义单引号
+        return "'" + str(val).replace("'", "''").replace("\\", "\\\\") + "'"
 
 with open('database_data.sql', 'w', encoding='utf-8') as f:
     # Products table
@@ -12,7 +23,7 @@ with open('database_data.sql', 'w', encoding='utf-8') as f:
     f.write('CREATE TABLE products (' + ', '.join(columns) + ');\n')
     
     for row in cursor.fetchall():
-        values = ['NULL' if v is None else str(v) if isinstance(v, (int, float)) else "'" + str(v).replace("'", "''") + "'" for v in row]
+        values = [escape_sql(v) for v in row]
         f.write('INSERT INTO products VALUES (' + ', '.join(values) + ');\n')
     
     # Unique products table
@@ -23,7 +34,7 @@ with open('database_data.sql', 'w', encoding='utf-8') as f:
     f.write('CREATE TABLE unique_products (' + ', '.join(columns) + ');\n')
     
     for row in cursor.fetchall():
-        values = ['NULL' if v is None else str(v) if isinstance(v, (int, float)) else "'" + str(v).replace("'", "''") + "'" for v in row]
+        values = [escape_sql(v) for v in row]
         f.write('INSERT INTO unique_products VALUES (' + ', '.join(values) + ');\n')
     
     # Daily new arrivals table
@@ -34,7 +45,7 @@ with open('database_data.sql', 'w', encoding='utf-8') as f:
     f.write('CREATE TABLE daily_new_arrivals (' + ', '.join(columns) + ');\n')
     
     for row in cursor.fetchall():
-        values = ['NULL' if v is None else str(v) if isinstance(v, (int, float)) else "'" + str(v).replace("'", "''") + "'" for v in row]
+        values = [escape_sql(v) for v in row]
         f.write('INSERT INTO daily_new_arrivals VALUES (' + ', '.join(values) + ');\n')
 
 conn.close()
