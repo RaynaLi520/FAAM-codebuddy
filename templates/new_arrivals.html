@@ -48,7 +48,7 @@
 {% if new_products %}
 <div class="products-grid">
     {% for product in new_products %}
-    <div class="product-card" data-item-type="{{ product.item_type }}">
+    <div class="product-card" data-item-type="{{ product.item_type or '' }}">
         <div class="product-image">
             {% if product.image_url %}
             <img src="{{ product.image_url }}" alt="{{ product.title }}" onerror="this.onerror=null; this.src='/static/images/placeholder.svg'">
@@ -59,20 +59,46 @@
         </div>
 
         <div class="product-info">
+            {% if product.item_type %}
+            <span class="badge badge-category">{{ product.item_type }}</span>
+            {% endif %}
             <h4 class="product-title">{{ product.title }}</h4>
             <p class="product-brand">{{ product.brand }}</p>
 
             <div class="product-price-section">
-                <span class="current-price">${{ "%.2f"|format(product.price) if product.price else 'N/A' }}</span>
+                {% if product.retail_price and product.retail_price > 0 %}
+                    {% if product.original_price and product.original_price > product.retail_price %}
+                    <span class="original-price"><s>${{ "%.2f"|format(product.original_price) }}</s></span>
+                    <span class="current-price">${{ "%.2f"|format(product.retail_price) }}</span>
+                    {% if product.discount_percentage and product.discount_percentage != '0%' %}
+                    <span class="badge badge-sale">{{ product.discount_percentage }}</span>
+                    {% endif %}
+                    {% else %}
+                    <span class="current-price">${{ "%.2f"|format(product.retail_price) }}</span>
+                    {% endif %}
+                {% elif product.price and product.price > 0 %}
+                <span class="current-price">${{ "%.2f"|format(product.price) }}</span>
+                {% else %}
+                <span class="current-price">N/A</span>
+                {% endif %}
             </div>
 
             {% if product.color_summary %}
             <p class="product-color">{{ product.color_summary }}</p>
             {% endif %}
 
+            {% if product.rating %}
+            <div class="product-rating">
+                <span class="stars">{{ '★' * product.rating|int }}{{ '☆' * (5 - product.rating|int) }}</span>
+                <span class="review-count">({{ product.review_count }} 条评论)</span>
+            </div>
+            {% endif %}
+
             <div class="product-actions">
                 {% if product.product_url %}
                 <a href="{{ product.product_url }}" target="_blank" class="btn btn-small">查看Target</a>
+                {% else %}
+                <a href="https://www.target.com/p/-/A-{{ product.tcin }}" target="_blank" class="btn btn-small">查看Target</a>
                 {% endif %}
             </div>
         </div>
