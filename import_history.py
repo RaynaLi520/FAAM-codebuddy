@@ -9,11 +9,28 @@ Brand 映射: WF -> Wild Fable, AND -> A New Day
 import sqlite3
 import pandas as pd
 from datetime import datetime
+import os
+import glob
 
 
 # ==================== 配置 ====================
+# 使用相对路径，文件需要放在脚本同一目录下
 DB_PATH = 'faam_products.db'
-EXCEL_PATH = 'C:/Users/31837/Desktop/DATA/New_Launched_0311-today(1).xlsx'
+
+# 自动查找 Excel 文件（支持带括号和不带括号的文件名）
+import glob
+excel_patterns = ['New_Launched_0311-today*.xlsx', 'New_Launched_0311*.xlsx']
+EXCEL_PATH = None
+for pattern in excel_patterns:
+    files = glob.glob(pattern)
+    if files:
+        # 选择最新修改的文件
+        files.sort(key=lambda x: os.path.getmtime(x), reverse=True)
+        EXCEL_PATH = files[0]
+        break
+
+if not EXCEL_PATH:
+    raise FileNotFoundError("未找到 Excel 文件，请将 New_Launched_0311-today.xlsx 上传到工作目录")
 
 # Brand 映射
 BRAND_MAPPING = {
