@@ -278,6 +278,20 @@ body {
     background: #10b981;
 }
 
+.badge-category {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-size: 0.65rem;
+    padding: 0.2rem 0.5rem;
+    margin-bottom: 0.3rem;
+}
+
+.badge-sale {
+    background: #ef4444;
+    font-size: 0.65rem;
+    padding: 0.2rem 0.4rem;
+    margin-left: 0.3rem;
+}
+
 .badge-clearance {
     background: #ef4444;
     right: 10px;
@@ -290,6 +304,17 @@ body {
 
 .product-info {
     padding: 1rem;
+}
+
+.product-category {
+    display: inline-block;
+    font-size: 0.7rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
 }
 
 .product-title {
@@ -513,6 +538,8 @@ body {
 /* Category filter row - single line with scroll */
 .category-row {
     max-width: 100%;
+    flex-wrap: nowrap !important;
+    overflow: hidden;
 }
 
 .category-group {
@@ -521,6 +548,32 @@ body {
     overflow-x: auto;
     padding-bottom: 0.25rem;
     align-items: center;
+    gap: 0.5rem;
+}
+
+.category-group .toggle-btn {
+    flex-shrink: 0;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    border-radius: 16px;
+    transition: all 0.2s ease;
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+}
+
+.category-group .toggle-btn:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    transform: scale(1.05);
+}
+
+.category-group .toggle-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
 }
 
 .category-group::-webkit-scrollbar {
