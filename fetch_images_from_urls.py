@@ -1,8 +1,19 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+从 Target 商品页面获取图片
+方法1: 从页面 HTML 中提取 JSON 数据中的图片
+方法2: 直接从 HTML 中提取 scene7 图片 URL
+方法3: 查找 meta og:image
+"""
+
 import requests
 import re
 import sqlite3
 import json
 import time
+from urllib.parse import urljoin
+
 
 def fetch_image_from_product_url(product_url):
     """从 Target 商品页面获取图片"""
@@ -36,7 +47,7 @@ def fetch_image_from_product_url(product_url):
                 pass
 
         # 方法2: 直接从 HTML 中提取 scene7 图片
-        images = re.findall(r'https://target\.scene7\.com/is/image/Target/[^"\'>\s]+', resp.text)
+        images = re.findall(r'https://target\.scene7\.com/is/image/Target/[^\"\'>\s]+', resp.text)
         if images:
             # 去重
             unique_images = list(set(images))
@@ -57,23 +68,31 @@ def fetch_image_from_product_url(product_url):
         if og_image2:
             return og_image2.group(1)
 
+        # 方法4: 查找 data-src 或 src 属性中的 scene7 图片
+        data_src = re.findall(r'data-src=["\']([^"\']*scene7[^"\']*)["\']', resp.text)
+        if data_src:
+            for img in data_src:
+                if 'scene7.com' in img and 'GUEST_' in img:
+                    return img
+
     except Exception as e:
         print(f'  请求错误: {e}')
 
     return None
 
+
 def main():
     conn = sqlite3.connect('faam_products.db')
     cur = conn.cursor()
 
-    # 找出所有 image_url 为空的记录
+    # 找出所有 image_url 为空或无效的记录
     print('=== 查找所有缺少图片的记录 ===')
 
     # 检查 daily_new_arrivals
     cur.execute('''
         SELECT dna.id, dna.tcin, dna.title, dna.product_url
         FROM daily_new_arrivals dna
-        WHERE dna.image_url IS NULL OR dna.image_url = ''
+        WHERE dna.image_url IS NULL OR dna.image_url = '' OR dna.image_url LIKE '%TCIN%'
     ''')
     missing_dna = cur.fetchall()
     print(f'daily_new_arrivals 中缺少图片: {len(missing_dna)} 条')
@@ -82,7 +101,7 @@ def main():
     cur.execute('''
         SELECT tcin, title, product_url
         FROM products
-        WHERE image_url IS NULL OR image_url = ''
+        WHERE image_url IS NULL OR image_url = '' OR image_url LIKE '%TCIN%'
     ''')
     missing_p = cur.fetchall()
     print(f'products 中缺少图片: {len(missing_p)} 条')
@@ -106,13 +125,14 @@ def main():
             # 1. 尝试从 products 表获取
             cur.execute('SELECT image_url FROM products WHERE tcin = ?', (tcin,))
             row = cur.fetchone()
-            if row and row[0]:
+            if row and row[0] and 'scene7.com' in str(row[0]) and 'GUEST_' in str(row[0]):
                 image_url = row[0]
-                print(f'  从 products 表获取: {image_url[:50]}...')
+                print(f'  从 products 表获取: {str(image_url)[:50]}...')
             # 2. 尝试从 product_url 获取
-            elif product_url:
+            elif product_url and 'target.com' in str(product_url):
                 print(f'  从商品链接获取: {product_url}')
                 image_url = fetch_image_from_product_url(product_url)
+
                 if image_url:
                     print(f'  获取成功: {image_url[:50]}...')
             # 3. 尝试构建 product_url
@@ -120,6 +140,7 @@ def main():
                 constructed_url = f'https://www.target.com/p/-/A-{tcin}'
                 print(f'  构建链接获取: {constructed_url}')
                 image_url = fetch_image_from_product_url(constructed_url)
+
                 if image_url:
                     print(f'  获取成功: {image_url[:50]}...')
 
@@ -152,13 +173,14 @@ def main():
             # 1. 尝试从 daily_new_arrivals 获取
             cur.execute('SELECT image_url FROM daily_new_arrivals WHERE tcin = ? AND image_url IS NOT NULL AND image_url != ""', (tcin,))
             row = cur.fetchone()
-            if row and row[0]:
+            if row and row[0] and 'scene7.com' in str(row[0]):
                 image_url = row[0]
-                print(f'  从 daily_new_arrivals 获取: {image_url[:50]}...')
+                print(f'  从 daily_new_arrivals 获取: {str(image_url)[:50]}...')
             # 2. 尝试从 product_url 获取
-            elif product_url:
+            elif product_url and 'target.com' in str(product_url):
                 print(f'  从商品链接获取: {product_url}')
                 image_url = fetch_image_from_product_url(product_url)
+
                 if image_url:
                     print(f'  获取成功: {image_url[:50]}...')
             # 3. 尝试构建 product_url
@@ -166,6 +188,7 @@ def main():
                 constructed_url = f'https://www.target.com/p/-/A-{tcin}'
                 print(f'  构建链接获取: {constructed_url}')
                 image_url = fetch_image_from_product_url(constructed_url)
+
                 if image_url:
                     print(f'  获取成功: {image_url[:50]}...')
 
@@ -188,15 +211,16 @@ def main():
 
     # 验证结果
     print('\n=== 验证结果 ===')
-    cur.execute('SELECT COUNT(*) FROM daily_new_arrivals WHERE image_url IS NULL OR image_url = ""')
+    cur.execute('SELECT COUNT(*) FROM daily_new_arrivals WHERE image_url IS NULL OR image_url = "" OR image_url LIKE "%TCIN%"')
     remaining_dna = cur.fetchone()[0]
     print(f'daily_new_arrivals 剩余缺少图片: {remaining_dna} 条')
 
-    cur.execute('SELECT COUNT(*) FROM products WHERE image_url IS NULL OR image_url = ""')
+    cur.execute('SELECT COUNT(*) FROM products WHERE image_url IS NULL OR image_url = "" OR image_url LIKE "%TCIN%"')
     remaining_p = cur.fetchone()[0]
     print(f'products 剩余缺少图片: {remaining_p} 条')
 
     conn.close()
+
 
 if __name__ == '__main__':
     main()

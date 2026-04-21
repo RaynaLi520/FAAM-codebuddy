@@ -51,7 +51,7 @@
     <div class="product-card" data-item-type="{{ product.item_type }}">
         <div class="product-image">
             {% if product.image_url %}
-            <img src="{{ product.image_url | image_proxy }}" alt="{{ product.title }}" onerror="this.onerror=null; this.src='/static/images/placeholder.svg'">
+            <img src="{{ product.image_url }}" alt="{{ product.title }}" onerror="this.onerror=null; this.src='/static/images/placeholder.svg'">
             {% else %}
             <div class="no-image">暂无图片</div>
             {% endif %}
