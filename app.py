@@ -128,8 +128,8 @@ def index():
         GROUP BY brand
     ''').fetchall()
 
-    # Get new arrivals count
-    new_count = conn.execute('SELECT COUNT(*) FROM products WHERE is_new = "Yes"').fetchone()[0]
+    # Get new arrivals count (from daily_new_arrivals table - all historical new products)
+    new_count = conn.execute('SELECT COUNT(*) FROM daily_new_arrivals').fetchone()[0]
 
     # Get today's new arrivals
     today = datetime.now().strftime('%Y-%m-%d')
