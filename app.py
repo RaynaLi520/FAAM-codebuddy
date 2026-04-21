@@ -117,13 +117,13 @@ def index():
     """Home page - Show FAAM project overview"""
     conn = get_db_connection()
 
-    # Get total products count
-    total_products = conn.execute('SELECT COUNT(*) FROM products').fetchone()[0]
+    # Get total unique products count (deduplicated by title + similar color/size)
+    total_products = conn.execute('SELECT COUNT(*) FROM unique_products').fetchone()[0]
 
-    # Get products by brand
+    # Get products by brand (from unique products)
     brand_stats = conn.execute('''
         SELECT brand, COUNT(*) as count
-        FROM products
+        FROM unique_products
         WHERE brand IN ('A New Day', 'Wild Fable')
         GROUP BY brand
     ''').fetchall()

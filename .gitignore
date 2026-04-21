@@ -26,6 +26,7 @@ logs/
 
 # Images (local cache)
 images/
+static/images/placeholder.svg
 !static/images/products/
 
 # OS
