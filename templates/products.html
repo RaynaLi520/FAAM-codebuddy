@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Build new URL
-            var baseUrl = '?brand=' + currentUrl.searchParams.get('brand' || '') +
+            var baseUrl = '?brand=' + (currentUrl.searchParams.get('brand') || '') +
                          '&is_new=' + (currentUrl.searchParams.get('is_new') || '') +
                          '&tcin=' + (currentUrl.searchParams.get('tcin') || '') +
                          '&is_clearance=' + (currentUrl.searchParams.get('is_clearance') || '') +
