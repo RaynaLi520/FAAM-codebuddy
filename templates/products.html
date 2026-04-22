@@ -26,34 +26,34 @@
     <div class="filter-row">
         <span class="filter-label">品牌:</span>
         <div class="toggle-group">
-            <a href="?brand=&is_new={{ is_new }}&tcin={{ tcin }}&is_clearance={{ is_clearance }}&has_discount={{ has_discount }}&search={{ search }}{% for it in selected_item_types %}&item_type={{ it | urlencode }}{% endfor %}"
+            <a href="?brand=&is_new={{ is_new }}&tcin={{ tcin }}&is_clearance={{ is_clearance }}&has_discount={{ has_discount }}&search={{ search | urlencode }}{% for it in selected_item_types %}&item_type={{ it | urlencode }}{% endfor %}"
                class="toggle-btn {% if not brand %}active{% endif %}">全部</a>
             <a href="?brand=A New Day&is_new={{ is_new }}&tcin={{ tcin }}&is_clearance={{ is_clearance }}&has_discount={{ has_discount }}&search={{ search }}{% for it in selected_item_types %}&item_type={{ it | urlencode }}{% endfor %}"
                class="toggle-btn {% if brand == 'A New Day' %}active{% endif %}">A New Day</a>
-            <a href="?brand=Wild Fable&is_new={{ is_new }}&tcin={{ tcin }}&is_clearance={{ is_clearance }}&has_discount={{ has_discount }}&search={{ search }}{% for it in selected_item_types %}&item_type={{ it | urlencode }}{% endfor %}"
+            <a href="?brand=Wild Fable&is_new={{ is_new }}&tcin={{ tcin }}&is_clearance={{ is_clearance }}&has_discount={{ has_discount }}&search={{ search | urlencode }}{% for it in selected_item_types %}&item_type={{ it | urlencode }}{% endfor %}"
                class="toggle-btn {% if brand == 'Wild Fable' %}active{% endif %}">Wild Fable</a>
         </div>
     </div>
     <div class="filter-row">
         <span class="filter-label">新品:</span>
         <div class="toggle-group">
-            <a href="?brand={{ brand }}&is_new=&tcin={{ tcin }}&is_clearance={{ is_clearance }}&has_discount={{ has_discount }}&search={{ search }}{% for it in selected_item_types %}&item_type={{ it | urlencode }}{% endfor %}"
+            <a href="?brand={{ brand }}&is_new=&tcin={{ tcin }}&is_clearance={{ is_clearance }}&has_discount={{ has_discount }}&search={{ search | urlencode }}{% for it in selected_item_types %}&item_type={{ it | urlencode }}{% endfor %}"
                class="toggle-btn {% if not is_new %}active{% endif %}">全部</a>
-            <a href="?brand={{ brand }}&is_new=yes&tcin={{ tcin }}&is_clearance={{ is_clearance }}&has_discount={{ has_discount }}&search={{ search }}{% for it in selected_item_types %}&item_type={{ it | urlencode }}{% endfor %}"
+            <a href="?brand={{ brand }}&is_new=yes&tcin={{ tcin }}&is_clearance={{ is_clearance }}&has_discount={{ has_discount }}&search={{ search | urlencode }}{% for it in selected_item_types %}&item_type={{ it | urlencode }}{% endfor %}"
                class="toggle-btn {% if is_new == 'yes' %}active{% endif %}">仅看新品</a>
         </div>
         <span class="filter-label" style="margin-left:1rem">清仓:</span>
         <div class="toggle-group">
-            <a href="?brand={{ brand }}&is_new={{ is_new }}&tcin={{ tcin }}&is_clearance=&has_discount={{ has_discount }}&search={{ search }}{% for it in selected_item_types %}&item_type={{ it | urlencode }}{% endfor %}"
+            <a href="?brand={{ brand }}&is_new={{ is_new }}&tcin={{ tcin }}&is_clearance=&has_discount={{ has_discount }}&search={{ search | urlencode }}{% for it in selected_item_types %}&item_type={{ it | urlencode }}{% endfor %}"
                class="toggle-btn {% if not is_clearance %}active{% endif %}">全部</a>
-            <a href="?brand={{ brand }}&is_new={{ is_new }}&tcin={{ tcin }}&is_clearance=yes&has_discount={{ has_discount }}&search={{ search }}{% for it in selected_item_types %}&item_type={{ it | urlencode }}{% endfor %}"
+            <a href="?brand={{ brand }}&is_new={{ is_new }}&tcin={{ tcin }}&is_clearance=yes&has_discount={{ has_discount }}&search={{ search | urlencode }}{% for it in selected_item_types %}&item_type={{ it | urlencode }}{% endfor %}"
                class="toggle-btn {% if is_clearance == 'yes' %}active{% endif %}">仅看清仓</a>
         </div>
         <span class="filter-label" style="margin-left:1rem">折扣:</span>
         <div class="toggle-group">
-            <a href="?brand={{ brand }}&is_new={{ is_new }}&tcin={{ tcin }}&is_clearance={{ is_clearance }}&has_discount=&search={{ search }}{% for it in selected_item_types %}&item_type={{ it | urlencode }}{% endfor %}"
+            <a href="?brand={{ brand }}&is_new={{ is_new }}&tcin={{ tcin }}&is_clearance={{ is_clearance }}&has_discount=&search={{ search | urlencode }}{% for it in selected_item_types %}&item_type={{ it | urlencode }}{% endfor %}"
                class="toggle-btn {% if not has_discount %}active{% endif %}">全部</a>
-            <a href="?brand={{ brand }}&is_new={{ is_new }}&tcin={{ tcin }}&is_clearance={{ is_clearance }}&has_discount=yes&search={{ search }}{% for it in selected_item_types %}&item_type={{ it | urlencode }}{% endfor %}"
+            <a href="?brand={{ brand }}&is_new={{ is_new }}&tcin={{ tcin }}&is_clearance={{ is_clearance }}&has_discount=yes&search={{ search | urlencode }}{% for it in selected_item_types %}&item_type={{ it | urlencode }}{% endfor %}"
                class="toggle-btn {% if has_discount == 'yes' %}active{% endif %}">仅看折扣</a>
         </div>
     </div>
@@ -61,7 +61,7 @@
         <span class="filter-label">类别:</span>
         <div class="category-group">
             {% for t in item_types %}
-            <a href="?brand={{ brand }}&is_new={{ is_new }}&tcin={{ tcin }}&is_clearance={{ is_clearance }}&has_discount={{ has_discount }}&search={{ search }}&item_type={{ t.item_type | urlencode }}{% for it in selected_item_types if it != t.item_type %}&item_type={{ it | urlencode }}{% endfor %}"
+            <a href="?brand={{ brand }}&is_new={{ is_new }}&tcin={{ tcin }}&is_clearance={{ is_clearance }}&has_discount={{ has_discount }}&search={{ search | urlencode }}&item_type={{ t.item_type | urlencode }}{% for it in selected_item_types if it != t.item_type %}&item_type={{ it | urlencode }}{% endfor %}"
                class="toggle-btn {% if t.item_type in selected_item_types %}active{% endif %}"
                data-item-type="{{ t.item_type }}">{{ t.item_type }}</a>
             {% endfor %}
@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
 {% if total_pages > 1 %}
 <div class="pagination">
     {% if page > 1 %}
-    <a href="?page={{ page - 1 }}&brand={{ brand }}&is_new={{ is_new }}&search={{ search }}&tcin={{ tcin }}&is_clearance={{ is_clearance }}&has_discount={{ has_discount }}{% for it in selected_item_types %}&item_type={{ it | urlencode }}{% endfor %}" class="page-link">&laquo; 上一页</a>
+    <a href="?page={{ page - 1 }}&brand={{ brand }}&is_new={{ is_new }}&search={{ search | urlencode }}&tcin={{ tcin }}&is_clearance={{ is_clearance }}&has_discount={{ has_discount }}{% for it in selected_item_types %}&item_type={{ it | urlencode }}{% endfor %}" class="page-link">&laquo; 上一页</a>
     {% endif %}
 
     <form class="page-jump-form" method="get" action="">
@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <span class="page-info">第 {{ page }} / {{ total_pages }} 页</span>
 
     {% if page < total_pages %}
-    <a href="?page={{ page + 1 }}&brand={{ brand }}&is_new={{ is_new }}&search={{ search }}&tcin={{ tcin }}&is_clearance={{ is_clearance }}&has_discount={{ has_discount }}{% for it in selected_item_types %}&item_type={{ it | urlencode }}{% endfor %}" class="page-link">下一页 &raquo;</a>
+    <a href="?page={{ page + 1 }}&brand={{ brand }}&is_new={{ is_new }}&search={{ search | urlencode }}&tcin={{ tcin }}&is_clearance={{ is_clearance }}&has_discount={{ has_discount }}{% for it in selected_item_types %}&item_type={{ it | urlencode }}{% endfor %}" class="page-link">下一页 &raquo;</a>
     {% endif %}
 </div>
 {% endif %}
