@@ -193,6 +193,7 @@ def products():
         count_query += ' AND is_clearance = "Yes"'
 
     if has_discount == 'yes':
+        # Filter items with discount info (exclude NULL, empty string, and explicit 0%)
         query += ' AND (discount_percentage IS NOT NULL AND discount_percentage != "" AND discount_percentage != "0%")'
         count_query += ' AND (discount_percentage IS NOT NULL AND discount_percentage != "" AND discount_percentage != "0%")'
 
@@ -218,15 +219,19 @@ def products():
     params.extend([per_page, (page - 1) * per_page])
 
     products_list = conn.execute(query, params).fetchall()
+    # Convert sqlite3.Row to dict for template compatibility
+    products_list = [dict(row) for row in products_list]
 
     # Get all item types for filter (only show types that have products)
-    all_item_types = conn.execute('''
+    all_item_types_raw = conn.execute('''
         SELECT item_type, COUNT(*) as cnt
         FROM products
         WHERE item_type IS NOT NULL AND item_type != ''
         GROUP BY item_type
         ORDER BY cnt DESC
     ''').fetchall()
+    # Convert to dict for template compatibility
+    all_item_types = [dict(row) for row in all_item_types_raw]
 
     conn.close()
 
