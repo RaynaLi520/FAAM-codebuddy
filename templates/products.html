@@ -119,11 +119,12 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="no-image">暂无图片</div>
             {% endif %}
 
-            {% if product.is_new == 'Yes' %}
-            <span class="badge badge-new">NEW</span>
-            {% endif %}
             {% if product.is_clearance == 'Yes' %}
             <span class="badge badge-clearance">清仓</span>
+            {% elif product.discount_percentage and product.discount_percentage not in ['0', '0%', '0.0', '0.00', ''] %}
+            <span class="badge badge-discount">折扣</span>
+            {% elif product.is_new == 'Yes' %}
+            <span class="badge badge-new">NEW</span>
             {% endif %}
         </div>
 
