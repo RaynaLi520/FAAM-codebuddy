@@ -109,6 +109,24 @@ def init_db():
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_date_added ON products(date_added)')
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_daily_date ON daily_new_arrivals(date_detected)')
 
+    # Create unique_products table (deduplicated products for display)
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS unique_products (
+            tcin TEXT PRIMARY KEY,
+            title TEXT,
+            color_summary TEXT,
+            size_summary TEXT,
+            retail_price REAL,
+            item_type TEXT,
+            image_url TEXT,
+            brand TEXT,
+            product_url TEXT,
+            rating REAL,
+            review_count INTEGER
+        )
+    ''')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_unique_brand ON unique_products(brand)')
+
     conn.commit()
     conn.close()
 
